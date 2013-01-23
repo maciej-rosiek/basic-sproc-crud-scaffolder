@@ -1,5 +1,6 @@
 import org.springframework.stereotype.Repository;
 import de.zalando.sprocwrapper.AbstractSProcService;
+import de.zalando.sprocwrapper.dsprovider.{{ datasourceProvider }};
 
 @Repository
 public class {{ interfaceName }}Impl
@@ -7,8 +8,8 @@ public class {{ interfaceName }}Impl
     implements {{ interfaceName }} {
 
     @Autowired
-    public {{ interfaceName }}Impl( final {{ datasourceProvider }} p ) {
-        super(p, {{ interfaceName }}.class);
+    public {{ interfaceName }}Impl(final {{ datasourceProvider }} ps) {
+        super(ps, {{ interfaceName }}.class);
     }
 
 {{ functionImplementations }}   

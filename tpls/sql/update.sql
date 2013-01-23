@@ -4,11 +4,11 @@ DECLARE
 BEGIN
   RETURN QUERY UPDATE {{schema}}.{{tableName}} 
   SET
-    {{ updateColumns }}
+{{ updateColumns }}
   WHERE
-    {{ whereColumns }}
+{{ whereColumns }}
   RETURNING
-    {{ returnColumns }}
+{{ returnColumns }}
 END;
 $$ LANGUAGE 'plpgsql' SECURITY DEFINER;
 

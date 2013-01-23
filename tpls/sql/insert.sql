@@ -2,12 +2,12 @@ CREATE OR REPLACE FUNCTION insert{{sprocName}}(p_in {{returnType}}) RETURNS SETO
 $$
 DECLARE 
   RETURN QUERY INSERT INTO {{schema}}.{{tableName}} (
-    {{columns}}
+{{columns}}
   )
   SELECT
-    {{ insertValues }}
+{{ insertValues }}
   RETURNING
-    {{ returnColumns }}
+{{ returnColumns }}
 END;
 $$ LANGUAGE 'plpgsql' SECURITY DEFINER;
 

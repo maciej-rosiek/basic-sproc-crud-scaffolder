@@ -4,9 +4,9 @@ DECLARE
 BEGIN
   RETURN DELETE FROM {{schema}}.{{tableName}}
   WHERE
-      {{ whereColumns }}
+{{ whereColumns }}
   RETURNING
-      {{ returnColumns }}
+{{ returnColumns }}
 END;
 $$ LANGUAGE 'plpgsql' SECURITY DEFINER;
 

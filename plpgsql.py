@@ -10,7 +10,7 @@ def getSProcName(schema,table):
   return schema[0:1].upper() + schema[1:] + table[0:1].upper() + table[1:]
 
 def getTypeName(table):
-  return table.name[0:1].upper() + table.name[1:]
+  return table.name
 
 def getFieldNameForTable(table):
   return table.name  

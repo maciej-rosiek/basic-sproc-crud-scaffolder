@@ -3,9 +3,9 @@ $$
 DECLARE 
 BEGIN
   RETURN QUERY SELECT
-    {{ selectColumns }}
+{{ selectColumns }}
   WHERE
-    {{ whereColumns }}
+{{ whereColumns }}
   ;
 END;
 $$ LANGUAGE 'plpgsql' SECURITY DEFINER;

@@ -39,7 +39,8 @@ def getFieldsForTable(schema,table):
                                                      where tc.table_name = c.table_name
                                                        and tc.table_schema = c.table_schema
                                                        and kcu.constraint_name = tc.constraint_name
-                                                       and tc.constraint_type = 'PRIMARY KEY' ) ) as is_primary_part
+                                                       and tc.constraint_type = 'PRIMARY KEY' ) ) as is_primary_part,
+                           udt_name
                       from information_schema.columns c
                      where table_name = '"""+table+"""'
                        and table_schema = '"""+schema+"""'
@@ -47,11 +48,13 @@ def getFieldsForTable(schema,table):
 
   l = []
   for r in cursor:
-    print r
     f = Field (r[0],r[1],isPk=r[4],isNullable=r[3])
 
-    if r[2] != None and r[2][0:7] == 'nextval':
+    if r[2] is not None and r[2][0:7] == 'nextval':
       f.set_is_serial ( True )
+    
+    if f.type == 'USER-DEFINED':
+        f.type = r[5]
 
     l.append( f )
 
@@ -109,8 +112,8 @@ class Association ( object ):
             l.append(self.colMap[k])
         return ",".join(l)
 
-pg2javaMap = { 'text': 'String', 'integer': 'Integer', 'bigint' : 'Long', 'timestamp without time zone' : 'Date' , 'character varying' : 'String' , 'smallint' : 'Integer' , 'character' : 'String' }
-pg2javaMapNotNull = { 'text': 'String', 'integer': 'integer', 'bigint' : 'long', 'timestamp without time zone' : 'Date' , 'character varying' : 'String' , 'smallint' : 'integer' , 'character' : 'String' }
+pg2javaMap = { 'text': 'String', 'integer': 'Integer', 'bigint' : 'Long', 'timestamp without time zone' : 'DateTime' , 'character varying' : 'String' , 'smallint' : 'Integer' , 'character' : 'String', 'timestamp with time zone' : 'DateTime'}
+pg2javaMapNotNull = { 'text': 'String', 'integer': 'integer', 'bigint' : 'long', 'timestamp without time zone' : 'DateTime' , 'character varying' : 'String' , 'smallint' : 'integer' , 'character' : 'String' }
 
 class Field(object):
     def __init__(self, name, t, isSerial = False, isPk = False, isEnum = False, isArray = False, isComplex = False, isNullable=True):
@@ -127,10 +130,13 @@ class Field(object):
       self.isSerial = v
 
     def get_java_type(self):
-      if self.isNullable:
-        return pg2javaMap[self.type]
+      if not self.type in pg2javaMap and not self.type in pg2javaMapNotNull:
+          return java.camel_case(self.type)
       else:
-        return pg2javaMapNotNull[self.type]
+        if self.isNullable:
+          return pg2javaMap[self.type]
+        else:
+          return pg2javaMapNotNull[self.type]
 
 
 class Enum(object):
@@ -172,12 +178,19 @@ def main():
   argp.add_argument('-U', '--user', dest='user')
   argp.add_argument('-D', '--database', dest='database')
   argp.add_argument('-T', '--table', dest='table')
+  argp.add_argument('-F', '--facet', dest='facet')
   argp.add_argument('-S', '--schema', dest='schema')
   argp.add_argument('-P', '--port', dest='port',default=5432)
   args = argp.parse_args()
 
-  if args.table == None:
+  if args.table == None and args.facet == None:
     create_for_table('public','parent')
+  if args.facet is not None:
+    setConnectionString( 'host='+args.host+' user='+args.user+' port='+ str(args.port) +' dbname=' + args.database )
+    for table in [args.facet + '_model', args.facet + '_config', args.facet + '_simple']:
+      fields = getFieldsForTable(args.schema, table)
+      t = Table (args.schema, table, fields)
+      scaffold (t)
   else:
     setConnectionString( 'host='+args.host+' user='+args.user+' port='+ str(args.port) +' dbname=' + args.database )
     fields = getFieldsForTable(args.schema, args.table)
