@@ -1,13 +1,18 @@
-CREATE OR REPLACE FUNCTION insert{{sprocName}}(p_in {{returnType}}) RETURNS SETOF {{returnType}} AS
-$$
-DECLARE 
-  RETURN QUERY INSERT INTO {{schema}}.{{tableName}} (
+create or replace function insert_{{sprocName}}(p_in {{returnType}}) returns setof {{returnType}} as
+$BODY$
+declare 
+  return query insert into {{schema}}.{{tableName}} (
 {{columns}}
   )
-  SELECT
+  select
 {{ insertValues }}
-  RETURNING
+  returning
 {{ returnColumns }}
-END;
-$$ LANGUAGE 'plpgsql' SECURITY DEFINER;
+end
+$BODY$
+
+language plpgsql
+    volatile
+    security definer
+    cost 100;
 

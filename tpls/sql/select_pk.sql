@@ -1,12 +1,17 @@
-CREATE OR REPLACE FUNCTION select{{sprocName}}(p_in {{returnType}}) RETURNS SETOF {{returnType}} AS
-$$
-DECLARE 
-BEGIN
-  RETURN QUERY SELECT
+create or replace function select_{{sprocName}}(p_in {{returnType}}) returns setof {{returnType}} as
+$BODY$
+declare 
+begin
+  return query select
 {{ selectColumns }}
-  WHERE
+  where
 {{ whereColumns }}
   ;
-END;
-$$ LANGUAGE 'plpgsql' SECURITY DEFINER;
+end
+$BODY$
+
+language plpgsql
+    volatile
+    security definer
+    cost 100;
 

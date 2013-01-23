@@ -1,12 +1,17 @@
-CREATE OR REPLACE FUNCTION delete{{sprocName}}(p_in {{returnType}}) RETURNS SETOF {{returnType}} AS
-$$
-DECLARE
-BEGIN
-  RETURN DELETE FROM {{schema}}.{{tableName}}
-  WHERE
+create or replace function delete_{{sprocName}}(p_in {{returnType}}) returns setof {{returnType}} as
+$BODY$
+declare
+begin
+  return delete from {{schema}}.{{tableName}}
+  where
 {{ whereColumns }}
-  RETURNING
+  returning
 {{ returnColumns }}
-END;
-$$ LANGUAGE 'plpgsql' SECURITY DEFINER;
+end
+$BODY$
+
+language plpgsql
+    volatile
+    security definer
+    cost 100;
 

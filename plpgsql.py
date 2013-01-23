@@ -7,7 +7,7 @@ def getPGTypeFieldName ( colName ):
   return colName[colName.find('_')+1:]
 
 def getSProcName(schema,table):
-  return schema[0:1].upper() + schema[1:] + table[0:1].upper() + table[1:]
+  return table
 
 def getTypeName(table):
   return table.name

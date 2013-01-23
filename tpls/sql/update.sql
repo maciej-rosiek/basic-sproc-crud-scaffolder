@@ -1,14 +1,19 @@
-CREATE OR REPLACE FUNCTION update{{sprocName}}(p_in {{returnType}}) RETURNS SETOF {{returnType}} AS
-$$
-DECLARE 
-BEGIN
-  RETURN QUERY UPDATE {{schema}}.{{tableName}} 
-  SET
+create or replace function update_{{sprocName}}(p_in {{returnType}}) returns setof {{returnType}} as
+$BODY$
+declare 
+begin
+  return query update {{schema}}.{{tableName}} 
+  set
 {{ updateColumns }}
-  WHERE
+  where
 {{ whereColumns }}
-  RETURNING
+  returning
 {{ returnColumns }}
-END;
-$$ LANGUAGE 'plpgsql' SECURITY DEFINER;
+end
+$BODY$
+
+language plpgsql
+    volatile
+    security definer
+    cost 100;
 
