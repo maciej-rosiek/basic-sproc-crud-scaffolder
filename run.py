@@ -151,7 +151,7 @@ def get_fields(schema,name):
 def scaffold( table ):
   print plpgsql.create_pg_type ( table )
   print java.create_java_type ( table )
-  print plpgsql.create_sprocs( table , table.getName() + "Type", table.fields )
+  print plpgsql.create_sprocs( table , table.getName(), table.fields )
   print java.create_sproc_service_interface( table )
   print java.create_sproc_service_implementation( table )
 
@@ -178,19 +178,12 @@ def main():
   argp.add_argument('-U', '--user', dest='user')
   argp.add_argument('-D', '--database', dest='database')
   argp.add_argument('-T', '--table', dest='table')
-  argp.add_argument('-F', '--facet', dest='facet')
   argp.add_argument('-S', '--schema', dest='schema')
   argp.add_argument('-P', '--port', dest='port',default=5432)
   args = argp.parse_args()
 
-  if args.table == None and args.facet == None:
+  if args.table == None:
     create_for_table('public','parent')
-  if args.facet is not None:
-    setConnectionString( 'host='+args.host+' user='+args.user+' port='+ str(args.port) +' dbname=' + args.database )
-    for table in [args.facet + '_model', args.facet + '_config', args.facet + '_simple']:
-      fields = getFieldsForTable(args.schema, table)
-      t = Table (args.schema, table, fields)
-      scaffold (t)
   else:
     setConnectionString( 'host='+args.host+' user='+args.user+' port='+ str(args.port) +' dbname=' + args.database )
     fields = getFieldsForTable(args.schema, args.table)
