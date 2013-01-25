@@ -65,7 +65,7 @@ def create_update(schema,tableName,pgTypeName,fields):
   cols = []
   for f in fields:
     if False == f.isSerial:
-      cols.append ("    " + f.name + " = COALESCE ( p_in." + getPGTypeFieldName ( f.name ) + ", " + f.name + " )" )
+      cols.append ("    " + f.name + " = coalesce(p_in." + getPGTypeFieldName ( f.name ) + ", " + f.name + ")" )
 
   updateColumns = ",\n".join(cols)
 

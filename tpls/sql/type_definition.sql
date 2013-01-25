@@ -1,4 +1,4 @@
-CREATE TYPE {{name}} AS (
+create type {{name}} as (
 {{ columns }}
 );
 
